@@ -4,6 +4,13 @@ class Router
   end
 
   def run
+    print_welcome
+    choice
+    action = gets.chomp.to_i
+    route_action(action)
+  end
+
+  private
 
     def print_welcome
       puts "Welcome to Naughts and Crosses"
@@ -26,11 +33,4 @@ class Router
       when 1 then @controller.play
       end
     end
-
-
-    print_welcome
-    choice
-    action = gets.chomp.to_i
-    route_action(action)
-  end
 end
