@@ -1,8 +1,8 @@
 require_relative 'models/game'
-require_relative 'controllers/game_controller'
+require_relative 'controllers/games_controller'
 require_relative 'router'
 
-controller = GameController.new
+controller = GamesController.new
 
 router = Router.new(controller)
 

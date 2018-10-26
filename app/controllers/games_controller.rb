@@ -1,6 +1,6 @@
 require_relative '../views/game_view'
 
-class GameController
+class GamesController
 
   POSITIONS = {
     "1" => "1",
@@ -54,16 +54,19 @@ class GameController
   end
 
   def check_if_game_over
-    if [POSITIONS["1"], POSITIONS["5"], POSITIONS["9"]] == ["x", "x", "x"] ||
-      [POSITIONS["1"], POSITIONS["4"], POSITIONS["7"]] == ["x", "x", "x"] ||
-      [POSITIONS["1"], POSITIONS["2"], POSITIONS["3"]] == ["x", "x", "x"] ||
-      [POSITIONS["3"], POSITIONS["5"], POSITIONS["7"]] == ["x", "x", "x"] ||
-      [POSITIONS["3"], POSITIONS["6"], POSITIONS["9"]] == ["x", "x", "x"] ||
-      [POSITIONS["2"], POSITIONS["5"], POSITIONS["8"]] == ["x", "x", "x"] ||
-      [POSITIONS["7"], POSITIONS["8"], POSITIONS["9"]] == ["x", "x", "x"] ||
-      [POSITIONS["4"], POSITIONS["5"], POSITIONS["6"]] == ["x", "x", "x"]
+    x = ["x", "x", "x"]
+    o = ["[]", "[]", "[]"]
+    if ([POSITIONS["1"], POSITIONS["5"], POSITIONS["9"]] == x || [POSITIONS["1"], POSITIONS["5"], POSITIONS["9"]] == o) ||
+      ([POSITIONS["1"], POSITIONS["4"], POSITIONS["7"]] == x || [POSITIONS["1"], POSITIONS["4"], POSITIONS["7"]] == o) ||
+      ([POSITIONS["1"], POSITIONS["2"], POSITIONS["3"]] == x || [POSITIONS["1"], POSITIONS["2"], POSITIONS["3"]] == o) ||
+      ([POSITIONS["3"], POSITIONS["5"], POSITIONS["7"]] == x || [POSITIONS["3"], POSITIONS["5"], POSITIONS["7"]] == o) ||
+      ([POSITIONS["3"], POSITIONS["6"], POSITIONS["9"]] == x || [POSITIONS["3"], POSITIONS["6"], POSITIONS["9"]] == o) ||
+      ([POSITIONS["2"], POSITIONS["5"], POSITIONS["8"]] == x || [POSITIONS["2"], POSITIONS["5"], POSITIONS["8"]] == o) ||
+      ([POSITIONS["7"], POSITIONS["8"], POSITIONS["9"]] == x || [POSITIONS["7"], POSITIONS["8"], POSITIONS["9"]] == o) ||
+      ([POSITIONS["4"], POSITIONS["5"], POSITIONS["6"]] == x || [POSITIONS["4"], POSITIONS["5"], POSITIONS["6"]] == o)
       @game_over = true
       p "Game Over: Winner is "
+      @view.print_board(POSITIONS)
     end
   end
 
