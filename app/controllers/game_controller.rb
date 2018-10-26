@@ -73,17 +73,24 @@ class GameController
   end
 
   def computer_play_first_move
-    @view.print_board(POSITIONS)
+    # @view.print_board(POSITIONS)
     if @starter_player == "computer"
       start_position = ["1", "3", "5", "7", "9"].sample
       POSITIONS[start_position] = "[]"
     elsif @starter_player == "human"
-      p "working on"
+      if POSITIONS[5] == "x"
+        move_position = ["1", "3", "7", "9"].sample
+        POSITIONS[move_position] = "[]"
+      end
     end
   end
 
   def computer_play
-    p "hello"
+    positions_left = []
+    # if value is "x" or "[]" when you convert to integer becomes 0
+    POSITIONS.values.each { |value| positions_left << value if value.to_i != 0 }
+    position = positions_left.sample
+    POSITIONS[position] = "[]"
   end
 
 end
