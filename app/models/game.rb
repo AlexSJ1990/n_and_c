@@ -5,6 +5,7 @@ class Game
   def initialize(attributes = {})
     @id = attributes[:id]
     @player = attributes[:player]
+    @starter_player = attributes[:starter_player]
     @result = attributes[:result]
     @move = attributes[:move]
     @game_over = false
