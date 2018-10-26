@@ -1,5 +1,5 @@
 
-class Game
+class Game < ActiveRecord::Base
   attr_reader :player, :result, :move
 
   def initialize(attributes = {})

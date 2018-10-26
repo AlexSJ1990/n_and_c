@@ -1,0 +1,3 @@
+development:
+  adapter: sqlite3                   # Database vendor (soon, postgres)
+  database: db/development.sqlite3   # File path of the database

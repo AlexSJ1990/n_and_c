@@ -1,4 +1,4 @@
-class Player
+class Player < ActiveRecord::Base
   attr_reader :username
   def initialize(attr = {})
     @username = attr[:username]
