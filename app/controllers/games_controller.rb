@@ -1,3 +1,4 @@
+
 require_relative '../views/game_view'
 
 class GamesController
@@ -46,9 +47,6 @@ class GamesController
     @view.print_board(POSITIONS)
     position_to_play = @view.get_info("Which position do you want to play?")
     if POSITIONS.keys.include?(position_to_play)
-
-      # in here need a ternary if player not computer ?  x : o
-
       POSITIONS["#{position_to_play}"] = "x"
     end
   end
