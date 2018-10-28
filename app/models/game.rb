@@ -1,19 +1,10 @@
 
-class Game < ActiveRecord::Base
-  attr_reader :player, :result, :move
+class Game
+  # TODO needs to inherit from ActiveRecord Base
 
-  def initialize(attributes = {})
-    @id = attributes[:id]
-    @player = attributes[:player]
-    @starter_player = attributes[:starter_player]
-    @result = attributes[:result]
-    @move = attributes[:move]
-    @game_over = false
-  end
-
-  def game_over!
-    @game_over = true
-  end
+  # def game_over!
+  #   @game_over = true
+  # end
 end
 
 
@@ -26,4 +17,7 @@ end
 
 # need to implement database with Active Record
 
+# when you are checking if either has won - don't recheck each position each time - use hash of values
+
+# have a current player which you switch with starter player to alternate moves
 
