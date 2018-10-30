@@ -21,24 +21,18 @@ class GamesController
 
   def play
     @starter_player = who_starts
-    @starter_player == "human" ? mark_position : computer_play_first_move
-    check_if_game_over
-
+    @current_player = @starter_player
     until @game_over == true
-      if @starter_player == "human"
-        computer_play
-        break if check_if_game_over
-        mark_position
-        break if check_if_game_over
-      else
-        mark_position
-        break if check_if_game_over
-        computer_play
-        break if check_if_game_over
-      end
+      whose_move      # this tells the computer to play or the human to play
+      @alternate_player = @players.select { |player| player != @current_player }.first
+      check_if_game_over
+      @current_player = @alternate_player
     end
   end
 
+  def whose_move
+    @current_player == "computer" ? computer_play : mark_position
+  end
 
 
   private
@@ -63,14 +57,14 @@ class GamesController
       ([POSITIONS["7"], POSITIONS["8"], POSITIONS["9"]] == x || [POSITIONS["7"], POSITIONS["8"], POSITIONS["9"]] == o) ||
       ([POSITIONS["4"], POSITIONS["5"], POSITIONS["6"]] == x || [POSITIONS["4"], POSITIONS["5"], POSITIONS["6"]] == o)
       @game_over = true
-      p "Game Over: Winner is "
+      p "Game Over: Winner is #{@current_player}"
       @view.print_board(POSITIONS)
     end
   end
 
   def who_starts
-    players = ["human", "computer"]
-    p start = players.sample
+    @players = ["human", "computer"]
+    @players.sample
   end
 
   def computer_play_first_move
