@@ -16,4 +16,7 @@ class GameView
       puts  "--------------------- "
   end
 
+  def print_info(info)
+    puts info
+  end
 end

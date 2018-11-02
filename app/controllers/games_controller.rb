@@ -57,17 +57,17 @@ class GamesController
   private
 
   def which_round
-    positions_left = POSITIONS.values.select { |value| value if value.to_i != 0 }
-    p "positions left is #{positions_left.length}"
-    if positions_left.length == 9 || positions_left.length == 8
+    @positions_left = POSITIONS.values.select { |value| value if value.to_i != 0 }
+    p "positions left is #{@positions_left.length}"
+    if @positions_left.length == 9 || @positions_left.length == 8
       @round = 0
-    elsif positions_left.length == 7 || positions_left.length == 6
+    elsif @positions_left.length == 7 || @positions_left.length == 6
       @round = 1
-    elsif positions_left.length == 5 || positions_left.length == 4
+    elsif @positions_left.length == 5 || @positions_left.length == 4
       @round = 2
-    elsif positions_left.length == 3 || positions_left.length == 2
+    elsif @positions_left.length == 3 || @positions_left.length == 2
       @round = 3
-    elsif positions_left.length == 1 || positions_left.length == 0
+    elsif @positions_left.length == 1 || @positions_left.length == 0
       @round = 4
     end
   end
@@ -98,7 +98,11 @@ class GamesController
         (player.values & ["7", "8", "9"] == ["7", "8", "9"]) ||
         (player.values & ["4", "5", "6"] == ["4", "5", "6"])
         @game_over = true
-        p "Game Over: Winner is #{@current_player}"
+        @view.print_info("Game Over: Winner is #{@current_player}")
+        @view.print_board(POSITIONS)
+      elsif @positions_left.length == 0
+        @game_over = true
+        @view.print_info("Game Over: Tie")
         @view.print_board(POSITIONS)
       end
     end
@@ -164,10 +168,8 @@ class GamesController
   end
 
   def computer_play
-    positions_left = []
     # if value is "x" or "[]" when you convert to integer becomes 0
-    POSITIONS.values.each { |value| positions_left << value if value.to_i != 0 }
-    position = positions_left.sample
+    position = @positions_left.sample
     POSITIONS[position] = "[]"
   end
 
