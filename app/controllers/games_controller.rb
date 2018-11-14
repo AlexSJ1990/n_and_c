@@ -143,35 +143,71 @@ class GamesController
       p @round
       if @round == 0            # round 0 - computer plays centre
         POSITIONS["5"] = "[]"
+        COMPUTER_MOVES["ROUND_0"] = "5"
       elsif @round == 1         # round 1 - computer move dependent on human_player move in round 0
         CORNER_POSITIONS.each do |position|
           if POSITIONS[position] == "x"
             POSITIONS[OPPOSITE_CORNERS_FOR_CORNER[position]] = "[]"
+            COMPUTER_MOVES["ROUND_1"] = OPPOSITE_CORNERS_FOR_CORNER[position]
             CORNER_POSITIONS.delete(position)
           else
             # human_player has put their first piece on a side
             SIDE_POSITIONS.each do |position|
                 p POSITIONS[position] == "x"
               if POSITIONS[position] == "x"         # play postion on either opposite corner
-                POSITIONS[OPPOSITE_CORNERS_FOR_SIDES[position].sample] = "[]"
+                position_chosen = OPPOSITE_CORNERS_FOR_SIDES[position].sample
+                POSITIONS[position_chosen] = "[]"
+                COMPUTER_MOVES["ROUND_1"] = position_chosen
                 SIDE_POSITIONS.delete(position)
               end
             end
           end
         end
       elsif @round == 2
-      #   check_if_win_close # if they have 2 of 3 then will need to block else go with offensive strategy
+      # TODO: check_if_win_close # if they have 2 of 3 then will need to block else go with offensive strategy
       # check if either diagonals are equal to zero (this means that they are filled with noughts or crosses)
-        if [POSITIONS["1"].to_i + POSITIONS["5"].to_i + POSITIONS["9"].to_i].reduce(:+) == 0 ||
-           [POSITIONS["3"].to_i + POSITIONS["5"].to_i + POSITIONS["7"].to_i].reduce(:+) == 0
-           # need to work out what the last human move was
-           p HUMAN_MOVES["ROUND_1"]
-           # 4 => 3
-           # 6 - 1
-           #
+      # if the below condition is true it also means that they have selected a corner position
+      # issue is still here !!
+
+        if [COMPUTER_MOVES["ROUND_0"], HUMAN_MOVES["ROUND_0"], COMPUTER_MOVES["ROUND_1"]].sort == ["1","5", "9"] || ["3","5","7"]
+
+            # case
+            # when HUMAN_MOVES["ROUND_1"] == "2" && HUMAN_MOVES["ROUND_0"] == "1" then POSITIONS["3"] = "[]"
+            # when HUMAN_MOVES["ROUND_1"] == "4" && HUMAN_MOVES["ROUND_0"] == "1" then POSITIONS["7"] = "[]"
+            # when HUMAN_MOVES["ROUND_1"] == "6" && HUMAN_MOVES["ROUND_0"] == "9" then POSITIONS["3"] = "[]"
+            # when HUMAN_MOVES["ROUND_1"] == "8" && HUMAN_MOVES["ROUND_0"] == "9" then POSITIONS["7"] = "[]"
+            # when HUMAN_MOVES["ROUND_1"] == "2" && HUMAN_MOVES["ROUND_0"] == "9" then POSITIONS["7"] = "[]"
+            # when HUMAN_MOVES["ROUND_1"] == "4" && HUMAN_MOVES["ROUND_0"] == "9" then POSITIONS["3"] = "[]"
+            # when HUMAN_MOVES["ROUND_1"] == "6" && HUMAN_MOVES["ROUND_0"] == "1" then POSITIONS["7"] = "[]"
+            # when HUMAN_MOVES["ROUND_1"] == "8" && HUMAN_MOVES["ROUND_0"] == "1" then POSITIONS["3"] = "[]"
+            # end
+
+            # refactored code below
+            # we already know that the moves so far create a diagonal on the board
+            # if the human_players next move is a side position (a mistake) then we set a trap via a triangle
+            # need to check if the side position is next to their initial position or not as this will change the triangle created
+
+            if HUMAN_MOVES["ROUND_0"] == "1"
+              HUMAN_MOVES["ROUND_1"] == "2" || HUMAN_MOVES["ROUND_1"] == "8" ? POSITIONS["3"] = "[]" : POSITIONS["7"] = "[]"
+            elsif HUMAN_MOVES["ROUND_0"] == "9"
+              HUMAN_MOVES["ROUND_1"] == "2" || HUMAN_MOVES["ROUND_1"] == "8" ? POSITIONS["7"] = "[]" : POSITIONS["3"] = "[]"
+            end
+          # end
+        else    # this else means that the human_player has selected a side position for round 1
+          # below will need to be refactored for if human player doesnt block - then you should go for the win
+          # actually this can go in the different check_win function?
+          p "hello"
+          p "computer move round 1 #{COMPUTER_MOVES["ROUND_1"]}"
+          case
+            when HUMAN_MOVES["ROUND_0"] == "2" && HUMAN_MOVES["ROUND_1"] == "1" && COMPUTER_MOVES["ROUND_1"] == "9" then POSITIONS["3"] = "[]"
+            when HUMAN_MOVES["ROUND_0"] == "2" && HUMAN_MOVES["ROUND_1"] == "3" && COMPUTER_MOVES["ROUND_1"] == "7" then POSITIONS["1"] = "[]"
+            when HUMAN_MOVES["ROUND_0"] == "4" && HUMAN_MOVES["ROUND_1"] == "1" then POSITIONS["3"] = "[]"
+            when HUMAN_MOVES["ROUND_0"] == "6" && HUMAN_MOVES["ROUND_1"] == "1" then POSITIONS["3"] = "[]"
+            when HUMAN_MOVES["ROUND_0"] == "8" && HUMAN_MOVES["ROUND_1"] == "1" then POSITIONS["3"] = "[]"
+          end
 
 
-         end
+        end
       end
     end
   end
