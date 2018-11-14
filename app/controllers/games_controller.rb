@@ -158,6 +158,7 @@ class GamesController
                 position_chosen = OPPOSITE_CORNERS_FOR_SIDES[position].sample
                 POSITIONS[position_chosen] = "[]"
                 COMPUTER_MOVES["ROUND_1"] = position_chosen
+                # TODO: remember why we delete this..
                 SIDE_POSITIONS.delete(position)
               end
             end
@@ -169,35 +170,18 @@ class GamesController
       # if the below condition is true it also means that they have selected a corner position
       # issue is still here !!
 
-        if [COMPUTER_MOVES["ROUND_0"], HUMAN_MOVES["ROUND_0"], COMPUTER_MOVES["ROUND_1"]].sort == ["1","5", "9"] || ["3","5","7"]
-
-            # case
-            # when HUMAN_MOVES["ROUND_1"] == "2" && HUMAN_MOVES["ROUND_0"] == "1" then POSITIONS["3"] = "[]"
-            # when HUMAN_MOVES["ROUND_1"] == "4" && HUMAN_MOVES["ROUND_0"] == "1" then POSITIONS["7"] = "[]"
-            # when HUMAN_MOVES["ROUND_1"] == "6" && HUMAN_MOVES["ROUND_0"] == "9" then POSITIONS["3"] = "[]"
-            # when HUMAN_MOVES["ROUND_1"] == "8" && HUMAN_MOVES["ROUND_0"] == "9" then POSITIONS["7"] = "[]"
-            # when HUMAN_MOVES["ROUND_1"] == "2" && HUMAN_MOVES["ROUND_0"] == "9" then POSITIONS["7"] = "[]"
-            # when HUMAN_MOVES["ROUND_1"] == "4" && HUMAN_MOVES["ROUND_0"] == "9" then POSITIONS["3"] = "[]"
-            # when HUMAN_MOVES["ROUND_1"] == "6" && HUMAN_MOVES["ROUND_0"] == "1" then POSITIONS["7"] = "[]"
-            # when HUMAN_MOVES["ROUND_1"] == "8" && HUMAN_MOVES["ROUND_0"] == "1" then POSITIONS["3"] = "[]"
-            # end
-
-            # refactored code below
+        if ["1", "3", "7", "9"].include?(HUMAN_MOVES["ROUND_0"])
             # we already know that the moves so far create a diagonal on the board
             # if the human_players next move is a side position (a mistake) then we set a trap via a triangle
             # need to check if the side position is next to their initial position or not as this will change the triangle created
-
-            if HUMAN_MOVES["ROUND_0"] == "1"
-              HUMAN_MOVES["ROUND_1"] == "2" || HUMAN_MOVES["ROUND_1"] == "8" ? POSITIONS["3"] = "[]" : POSITIONS["7"] = "[]"
-            elsif HUMAN_MOVES["ROUND_0"] == "9"
-              HUMAN_MOVES["ROUND_1"] == "2" || HUMAN_MOVES["ROUND_1"] == "8" ? POSITIONS["7"] = "[]" : POSITIONS["3"] = "[]"
-            end
-          # end
-        else    # this else means that the human_player has selected a side position for round 1
+          if HUMAN_MOVES["ROUND_0"] == "1"
+            HUMAN_MOVES["ROUND_1"] == "2" || HUMAN_MOVES["ROUND_1"] == "8" ? POSITIONS["3"] = "[]" : POSITIONS["7"] = "[]"
+          elsif HUMAN_MOVES["ROUND_0"] == "9"
+            HUMAN_MOVES["ROUND_1"] == "2" || HUMAN_MOVES["ROUND_1"] == "8" ? POSITIONS["7"] = "[]" : POSITIONS["3"] = "[]"
+          end
+        else    # this else means that the human_player has selected a side position for round 0
           # below will need to be refactored for if human player doesnt block - then you should go for the win
           # actually this can go in the different check_win function?
-          p "hello"
-          p "computer move round 1 #{COMPUTER_MOVES["ROUND_1"]}"
           case
             when HUMAN_MOVES["ROUND_0"] == "2" && HUMAN_MOVES["ROUND_1"] == "1" && COMPUTER_MOVES["ROUND_1"] == "9" then POSITIONS["3"] = "[]"
             when HUMAN_MOVES["ROUND_0"] == "2" && HUMAN_MOVES["ROUND_1"] == "3" && COMPUTER_MOVES["ROUND_1"] == "7" then POSITIONS["1"] = "[]"
@@ -205,9 +189,10 @@ class GamesController
             when HUMAN_MOVES["ROUND_0"] == "6" && HUMAN_MOVES["ROUND_1"] == "1" then POSITIONS["3"] = "[]"
             when HUMAN_MOVES["ROUND_0"] == "8" && HUMAN_MOVES["ROUND_1"] == "1" then POSITIONS["3"] = "[]"
           end
-
-
         end
+      elsif @round == 3
+        check_if_win_close
+
       end
     end
   end
