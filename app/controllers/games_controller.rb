@@ -45,6 +45,17 @@ class GamesController
     "7" => "3"
   }
 
+  WINNING_COMBINATIONS = {
+    "1" => ["1", "5", "9"],
+    "2" => ["1", "4", "7"],
+    "3" => ["1", "2", "3"],
+    "4" => ["3", "5", "7"],
+    "5" => ["3", "6", "9"],
+    "6" => ["2", "5", "8"],
+    "7" => ["7", "8", "9"],
+    "8" => ["4", "5", "6"]
+  }
+
 
 
   CORNER_POSITIONS = [POSITIONS["1"], POSITIONS["3"], POSITIONS["7"], POSITIONS["9"]]
@@ -168,8 +179,6 @@ class GamesController
       # TODO: check_if_win_close # if they have 2 of 3 then will need to block else go with offensive strategy
       # check if either diagonals are equal to zero (this means that they are filled with noughts or crosses)
       # if the below condition is true it also means that they have selected a corner position
-      # issue is still here !!
-
         if ["1", "3", "7", "9"].include?(HUMAN_MOVES["ROUND_0"])
             # we already know that the moves so far create a diagonal on the board
             # if the human_players next move is a side position (a mistake) then we set a trap via a triangle
@@ -182,16 +191,37 @@ class GamesController
         else    # this else means that the human_player has selected a side position for round 0
           # below will need to be refactored for if human player doesnt block - then you should go for the win
           # actually this can go in the different check_win function?
-          case
-            when HUMAN_MOVES["ROUND_0"] == "2" && HUMAN_MOVES["ROUND_1"] == "1" && COMPUTER_MOVES["ROUND_1"] == "9" then POSITIONS["3"] = "[]"
-            when HUMAN_MOVES["ROUND_0"] == "2" && HUMAN_MOVES["ROUND_1"] == "3" && COMPUTER_MOVES["ROUND_1"] == "7" then POSITIONS["1"] = "[]"
-            when HUMAN_MOVES["ROUND_0"] == "4" && HUMAN_MOVES["ROUND_1"] == "1" then POSITIONS["3"] = "[]"
-            when HUMAN_MOVES["ROUND_0"] == "6" && HUMAN_MOVES["ROUND_1"] == "1" then POSITIONS["3"] = "[]"
-            when HUMAN_MOVES["ROUND_0"] == "8" && HUMAN_MOVES["ROUND_1"] == "1" then POSITIONS["3"] = "[]"
+
+          # look at how to refactor this is messy - is based on the case statement below - but needed to set the computer moves in here also
+          if HUMAN_MOVES["ROUND_0"] == "2" && COMPUTER_MOVES["ROUND_1"] == "9" || HUMAN_MOVES["ROUND_0"] == "6" && COMPUTER_MOVES["ROUND_1"] == "1"
+            POSITIONS["3"] = "[]"
+            COMPUTER_MOVES["ROUND_2"] = "3"
+          elsif HUMAN_MOVES["ROUND_0"] == "2" && COMPUTER_MOVES["ROUND_1"] == "7" || HUMAN_MOVES["ROUND_0"] == "4" && COMPUTER_MOVES["ROUND_1"] == "3"
+            POSITIONS["1"] = "[]"
+            COMPUTER_MOVES["ROUND_2"] = "1"
+          elsif HUMAN_MOVES["ROUND_0"] == "4" && COMPUTER_MOVES["ROUND_1"] == "9" || HUMAN_MOVES["ROUND_0"] == "8" && COMPUTER_MOVES["ROUND_1"] == "1"
+            POSITIONS["7"] = "[]"
+            COMPUTER_MOVES["ROUND_2"] = "7"
+          elsif HUMAN_MOVES["ROUND_0"] == "6" && COMPUTER_MOVES["ROUND_1"] == "7" || HUMAN_MOVES["ROUND_0"] == "8" && COMPUTER_MOVES["ROUND_1"] == "3"
+            POSITIONS["9"] = "[]"
+            COMPUTER_MOVES["ROUND_2"] = "9"
           end
+
+        #   case
+        #     when HUMAN_MOVES["ROUND_0"] == "2" && COMPUTER_MOVES["ROUND_1"] == "9" then POSITIONS["3"] = "[]", COMPUTER_MOVES["ROUND_2"] = "3"
+        #     when HUMAN_MOVES["ROUND_0"] == "2" && COMPUTER_MOVES["ROUND_1"] == "7" then POSITIONS["1"] = "[]"
+        #     when HUMAN_MOVES["ROUND_0"] == "4" && COMPUTER_MOVES["ROUND_1"] == "3" then POSITIONS["1"] = "[]"
+        #     when HUMAN_MOVES["ROUND_0"] == "4" && COMPUTER_MOVES["ROUND_1"] == "9" then POSITIONS["7"] = "[]"
+        #     when HUMAN_MOVES["ROUND_0"] == "6" && COMPUTER_MOVES["ROUND_1"] == "7" then POSITIONS["9"] = "[]"
+        #     when HUMAN_MOVES["ROUND_0"] == "6" && COMPUTER_MOVES["ROUND_1"] == "1" then POSITIONS["3"] = "[]"
+        #     when HUMAN_MOVES["ROUND_0"] == "8" && COMPUTER_MOVES["ROUND_1"] == "1" then POSITIONS["7"] = "[]"
+        #     when HUMAN_MOVES["ROUND_0"] == "8" && COMPUTER_MOVES["ROUND_1"] == "3" then POSITIONS["9"] = "[]"
+        #   end
         end
       elsif @round == 3
-        check_if_win_close
+        # check_if_win_close("computer") # here we want to pass an instance of computer?
+        check_if_win_close_computer
+        check_if_win_close("human")
 
       end
     end
@@ -212,29 +242,45 @@ class GamesController
     end
   end
 
-  def check_if_win_close
-    # TODO
-    # want this to work both ways if computer has 2 in a row play the 3rd
-    # if the human has 2 in a row want to block the 3rd
-    # this method will be called on computers go
-    # first want to check human moves
+  def check_if_win_close_computer
+    winning_combinations = WINNING_COMBINATIONS.values
+    winning_combinations.each do |combination|
 
-    players = [HUMAN_MOVES, COMPUTER_MOVES]
-    players.each do |player|
-      if player.values & ["1", "5", "9"] == ["1", "5"] ||
-        player.values & ["1", "4", "7"] == ["1", "4", "7"] ||
-        player.values & ["1", "2", "3"] == ["1", "2", "3"] ||
-        player.values & ["3", "5", "7"] == ["3", "5", "7"] ||
-        player.values & ["3", "6", "9"] == ["3", "6", "9"] ||
-        player.values & ["2", "5", "8"] == ["2", "5", "8"] ||
-        player.values & ["7", "8", "9"] == ["7", "8", "9"] ||
-        player.values & ["4", "5", "6"] == ["4", "5", "6"]
+      if (COMPUTER_MOVES.values & combination).sort == [combination[0], combination[1]] ||
+        (COMPUTER_MOVES.values & combination).sort == [combination[0], combination[2]] ||
+        (COMPUTER_MOVES.values & combination).sort == [combination[1], combination[2]]
+
+        num = combination.select { |number| (COMPUTER_MOVES.values & combination).include?(number) == false }.first
+        POSITIONS[num] = "[]" if POSITIONS[num] != "x" && POSITIONS[num] != "[]"
+      end
+    end
+  end
 
 
+  def check_if_win_close(player) # when called will take either computer or human
+    # first want to check if computer has 2 in a row with a third untouched - want to play here
+    # if not want to check if the human player has 2 in a row with a third untouched - want to block here
 
-        winning_combinations.each do |combination|
-        # create new hash with
+    # TODO: need to set the human_moves for round 2 - currently not set so method doesn't work properly
 
+    winning_combinations = WINNING_COMBINATIONS.values
+    winning_combinations.each do |combination|
+      # puts "combination is #{combination}"
+      # p "winning combination 1 and 2 is #{[combination[0], combination[1]]}"
+      # p POSITIONS[combination[2]]
+      # p "human moves are #{HUMAN_MOVES.values}"
+      # p "where human_move and winning comb numbers are the same #{HUMAN_MOVES.values & combination}"
+      # p (HUMAN_MOVES.values & combination) == [combination[0], combination[1]]
+      if (HUMAN_MOVES.values & combination).sort == [combination[0], combination[1]] ||
+        (HUMAN_MOVES.values & combination).sort == [combination[0], combination[2]] ||
+        (HUMAN_MOVES.values & combination).sort == [combination[1], combination[2]]
+
+        p combination
+        num = combination.select { |number| (HUMAN_MOVES.values & combination).include?(number) == false }.first
+        p num
+        p POSITIONS[num]
+        if POSITIONS[num] != "x" && POSITIONS[num] != "[]"
+          POSITIONS[num] = "[]"
         end
       end
     end
